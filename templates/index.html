@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Capstone Demo - Language Model Audit Trail</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container mt-4">
+      <h3>Capstone Demo - Language Model Audit Trail: by Paul Gimeno</h3>
+      
+      <br/>
+      <br/>
+      <form action="{{ url_for('generate_event') }}" method="get">
+        <button type="submit" class="btn btn-primary">Generate Event</button>
+      </form>
+      <br/>
+      <br/>
+
+      <h2>Events</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Recommendation</th>
+            <th>Details</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in range(data.shape[0]) %}
+          <tr>
+            <td>{{ data.event_desc[i] }}</td>
+            <td>{{ data.recommendation[i] }}</td>
+            <td>
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#whyModal{{ i }}">Details</button>
+              <div class="modal fade" id="whyModal{{ i }}" tabindex="-1" role="dialog" aria-labelledby="whyModalLabel{{ i }}" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="whyModalLabel{{ i }}">Details</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      {{ data.explainer[i] }}
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <a href="{{ url_for('audit_trail', id=data.id[i]) }}" class="btn btn-secondary">Audit Trail</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Audit Trail</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Back to Main</a>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <h1>Audit Trail for {{ data.rowid }}</h1>
+      <div class="list-group">
+        {% for col in data.columns %}
+        <div class="list-group-item">
+          <strong>{{ col }}:</strong> {{ data[col].loc[0] }}
+        </div>
+        {% endfor %}
+      </div>
+      <a class="btn btn-primary" href="{{ url_for('index') }}">Back to Index</a>
+    </div>
+  </body>
+</html>
+
