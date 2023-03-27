@@ -3,6 +3,12 @@
   <head>
     <title>Capstone Demo - Language Model Audit Trail</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        
+        table {
+          font-size: 12px;
+        }
+      </style>
   </head>
   <body>
     <div class="container mt-4">
@@ -20,6 +26,7 @@
       <table class="table">
         <thead>
           <tr>
+            <th>Time</th>
             <th>Event</th>
             <th>Recommendation</th>
             <th>Details</th>
@@ -27,8 +34,9 @@
           </tr>
         </thead>
         <tbody>
-          {% for i in range(data.shape[0]) %}
+          {% for i in range(data.shape[0]) | sort(reverse=True) %}
           <tr>
+            <td>{{ data.request_time[i] }}</td>
             <td>{{ data.event_desc[i] }}</td>
             <td>{{ data.recommendation[i] }}</td>
             <td>
@@ -43,7 +51,7 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      {{ data.explainer[i] }}
+                      {{ data.detail[i] }}
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

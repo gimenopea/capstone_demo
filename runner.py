@@ -70,7 +70,7 @@ def random_classification_model(donor_types):
     model_date = model_date.strftime('%Y-%m-%d')
     #create variable called accuracy values between .5 to .99
 
-    accuracy = round(np.random.rand(),2)
+    accuracy = round(0.8 + 0.2 * np.random.rand(), 2)
     f1 = round(np.random.rand(),2)
 
     result = {
@@ -185,11 +185,22 @@ def action_recommendation(payload):
     model_accuracy = payload.get('classification').get('model_accuracy')
     model_date = payload.get('classification').get('model_date')
     
-    explainer = f"The model {model_name} was trained on a dataset from {model_date} with an accuracy of {model_accuracy}. {recommendation} was determined the best course of action based on your goals"
+    if task == 'email your boss':
+        detail = f'Dear Boss, check our donor {donor_id} and see if we can get a meeting with them.'
+    else:
+        prompt = f"""I want you to {task} to donor {donor_id}. given the urgency of: {action}"""
+        detail = llm(prompt)
+        trail['prompt_chain_2'] = prompt
+        trail['prompt_chain_2_response'] = detail
+        
+    trail['model_explainer'] = f"The model {model_name} was trained on a dataset from {model_date} with an accuracy of {model_accuracy}. {recommendation} was determined the best course of action based on your goals"
     
-    trail['explainer'] = explainer
+    trail['detail'] = detail
     trail['payload'] = payload
-    return recommendation, explainer, trail
+    
+    trail['my_responsibility_profile'] = my_responsibility_profile
+    
+    return recommendation, detail, trail
 
 
 if __name__ == "__main__":
@@ -200,17 +211,20 @@ if __name__ == "__main__":
     
     n_llm = pd.json_normalize(df['llm_metadata'])
     n_payload = pd.json_normalize(df['payload'])
+    n_responsibility = pd.json_normalize(df['my_responsibility_profile'])
 
-    df = pd.concat([df, n_llm, n_payload], axis=1)
+    df = pd.concat([df, n_llm, n_payload, n_responsibility], axis=1)
 
     #drop the columns that are nested dictionaries
 
-    df.drop(['llm_metadata', 'payload'], axis=1, inplace=True)
-    df['recommendation'] = recommendation
-    df['explainer'] = explainer
+    df.drop(['llm_metadata', 'payload','my_responsibility_profile'], axis=1, inplace=True)
+    df['recommendation'] = recommendation 
     df['event_desc'] = f'event: {df["activity.activity_type"].loc[0]} made by donor id {df["activity.donor_id"].loc[0]}'
-    df['id'] =  df["activity.donor_id"].loc[0] + df["request_time"].loc[0]
+    df['id'] = df["request_time"].loc[0] + df["activity.donor_id"].loc[0] 
     df['id'] = re.sub(r'\W+', '', df['id'].loc[0])
+    df['id'] = df['id'].apply(lambda x: x[1:] if x.startswith('0') else x)
+    
+    
     df = df.astype(str)
 
     df.to_sql('trail', conn, if_exists='append', index=True)      
