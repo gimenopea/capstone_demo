@@ -7,6 +7,7 @@ from datetime import datetime
 import sys
 
 from dotenv import load_dotenv
+
 def setup():
     load_dotenv()
     print('keys loaded')

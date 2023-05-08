@@ -46,6 +46,26 @@
     <br />
     <br />
 
+ 
+    <div id="newest-row" class="card text-center">
+      {% set newest_row = data.tail(1).iloc[0] %}
+      <div class="card-body text-center">
+        <h5 class="card-title">New Event for Prospect {{ newest_row.get('action.prospect_id') }}</h5>
+        {% if newest_row.get('action.event_type') == 'donation' %}
+          <h6 class="card-subtitle mb-2 text-muted"> Our prospect just made a donation to support the {{ newest_row.get('action.donation_purpose') }}</h6>
+          <h6 class="card-subtitle mb-2 text-muted"> this initiative aids in {{ newest_row.get('action.description') }}</h6>
+        {% else %}
+          <h6 class="card-subtitle mb-2 text-muted">{{ newest_row.get('action.event_type') }}</h6>
+        {% endif %}
+     <h6 class="card-subtitle mb-2 text-muted">   <span style="color: red">{{ newest_row.get('recommendation') }}</span></h6>
+        <p class="card-text">On {{ newest_row.get('request_time') }}</p>
+      </div>
+    </div>
+    
+    
+    
+    
+
     <h2>Events</h2>
     <table class="table" id="dataTable">
       <thead>
