@@ -35,25 +35,27 @@
         <div class="container">
           <h2 id="responsibilities-heading">What i care about</h2>
           <ul id="responsibilities-list">
-            <li>Allocation Responsible: {{ data.allocation_responsible.loc[0] }}</li>
-            <li>Donor Type Responsible: {{ data.donor_type_responsible.loc[0] }}</li>
-            <li>Dataset Threshold: {{ data.dataset_threshold.loc[0] }}</li>
+            {{ data.employee_goals[0].replace('\n', '<br>')|safe }}
+           
           </ul>
         </div>
       </div>
 
       <div id="responsibilities-section">
         <div class="container">
-          <h2 id="responsibilities-heading">Things that relate to compliance in my job</h2>
+          <h2 id="responsibilities-heading">Data Source Analysis and Checklists</h2>
           <ul id="responsibilities-list">
-            <li>Potential Dataset issues: {{ data["dataset.dataset_profile"].loc[0] }}</li>
-            <li>Data Privacy - is my dataset cleared for access?: {{ data["dataset.cleared_for_access"].loc[0] }}</li>           
+             {{ data.employee_datasteward[0].replace('\n', '<br>')|safe }}
+           
           </ul>
         </div>
       </div>
 
+
+     
+
     <div class="container">
-      <h1>Audit Trail record: {{ data.id.loc[0] }}</h1>
+      <h1>Audit Trail record: {{ data.eventid.loc[0] }}</h1>
       <div class="list-group">
         {% for col in data.columns %}
         <div class="list-group-item">
@@ -62,7 +64,7 @@
         {% endfor %}
       </div>
       <a class="btn btn-primary" href="{{ url_for('index') }}">Back to Index</a>
-    </div>
+    </div> -->
   </body>
 </html>
 

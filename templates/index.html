@@ -1,75 +1,124 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Capstone Demo - Language Model Audit Trail</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <style>
-        
-        table {
-          font-size: 12px;
-        }
-      </style>
-  </head>
-  <body>
-    <div class="container mt-4">
-      <h3>Capstone Demo - Language Model Audit Trail: by Paul Gimeno</h3>
-      
-      <br/>
-      <br/>
-      <form action="{{ url_for('generate_event') }}" method="get">
-        <button type="submit" class="btn btn-primary">Generate Event</button>
-      </form>
-      <br/>
-      <br/>
 
-      <h2>Events</h2>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Time</th>
-            <th>Event</th>
-            <th>Recommendation</th>
-            <th>Details</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for i in range(data.shape[0]) | sort(reverse=True) %}
-          <tr>
-            <td>{{ data.request_time[i] }}</td>
-            <td>{{ data.event_desc[i] }}</td>
-            <td>{{ data.recommendation[i] }}</td>
-            <td>
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#whyModal{{ i }}">Details</button>
-              <div class="modal fade" id="whyModal{{ i }}" tabindex="-1" role="dialog" aria-labelledby="whyModalLabel{{ i }}" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="whyModalLabel{{ i }}">Details</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      {{ data.detail[i] }}
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
+<head>
+  <title>SEAS 6402 Capstone Demo</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <style>
+    table {
+      font-size: 12px;
+    }
+  </style>
+
+  <!-- DataTables JS -->
+  <script type="text/javascript" charset="utf8"
+    src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" charset="utf8"
+    src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Include DataTables CSS -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+</head>
+
+<header class="bg-light border-bottom py-3">
+  <div class="container text-center">
+    <h1 class="mb-0">Audit Trail Management Demo</h1>
+    <span class="me-3">SEAS 6402 Capstone Project, Spring 2023</span>
+    <div class="d-flex justify-content-center mt-2">
+      <span class="me-3">Developed by Paul Gimeno</span>
+
+      <span class="me-3"><a href="https://github.com/username/your-repo" target="_blank" class="link-primary">GitHub
+          Pages</a></span>
+      <span><a href="mailto:pgimeno@gwu.edu" class="link-primary">Email: pgimeno@gwu.edu</a></span>
+    </div>
+  </div>
+</header>
+
+<body>
+  <div class="container mt-4">
+
+
+    <br />
+    <br />
+    <form action="{{ url_for('generate_event') }}" method="get">
+      <button type="submit" class="btn btn-primary">Generate Event</button>
+    </form>
+    <br />
+    <br />
+
+    <h2>Events</h2>
+    <table class="table" id="dataTable">
+      <thead>
+        <tr>
+          <th scope="col">Time</th>
+          <th scope="col">Event</th>
+          <th scope="col">Recommendation</th>
+          <th scope="col">Details</th>
+          <th scope="col">Audit Trail</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in range(data.shape[0]) | sort(reverse=True) %}
+        <tr>
+          <td>{{ data.request_time[i] }}</td>
+          <td>{{ data['action.event_type'][i] }}</td>
+          <td>{{ data.recommendation[i] }}</td>
+          <td>
+            <button type="button" class="btn btn-primary" data-toggle="modal"
+              data-target="#whyModal{{ i }}">Details</button>
+            <div class="modal fade" id="whyModal{{ i }}" tabindex="-1" role="dialog"
+              aria-labelledby="whyModalLabel{{ i }}" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="whyModalLabel{{ i }}">Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    {{ data.recommendation_detail[i] }}
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                   </div>
                 </div>
               </div>
-            </td>
-            <td>
-              <a href="{{ url_for('audit_trail', id=data.id[i]) }}" class="btn btn-secondary">Audit Trail</a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-  </body>
+            </div>
+          </td>
+          <td>
+            <a href="{{ url_for('audit_trail', id=data['eventid'][i]) }}" class="btn btn-secondary">Audit Trail</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Include Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+  <!-- Include DataTables JavaScript -->
+  <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      $('#dataTable').DataTable({
+        columnDefs: [
+          { orderable: false, targets: 'col-actions' }
+        ],
+        "pageLength": 50,
+        order: [[0, 'desc']],
+        scrollX: false
+      });
+    });
+
+  </script>
+</body>
+
 </html>
