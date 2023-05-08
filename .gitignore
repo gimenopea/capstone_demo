@@ -1,3 +1,8 @@
 /.env
 /trail.db
 /venv
+.vscode/settings.json
+__pycache__/activity.cpython-311.pyc
+.gitignore
+__pycache__/skynet.cpython-311.pyc
+__pycache__/event_gen.cpython-311.pyc
